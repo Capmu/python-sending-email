@@ -1,12 +1,14 @@
 import os
 import smtplib
+import datetime
+import pandas as pd
 from email import encoders
 from email.mime.base import MIMEBase
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
 
-attactment = 'test-file.txt'
+attactment = f'output_{datetime.datetime.now().strftime("%Y-%m-%d")}.xlsx'
 
 
 def sendEmail():
@@ -39,5 +41,21 @@ def sendEmail():
     server.sendmail(sender_email, recipient_email, message.as_string())
     server.quit()
 
+def generateExcel():
+    # Create some sample data
+    data = {'Name': ['Alice', 'Bob', 'Charlie', 'David'],
+            'Age': [25, 32, 18, 47],
+            'Gender': ['F', 'M', 'M', 'M'],
+            'Salary': [50000, 75000, 40000, 90000]}
 
+    # Convert the data into a Pandas DataFrame
+    df = pd.DataFrame(data)
+
+    # Create a new Excel file and write the DataFrame to it
+    with pd.ExcelWriter(attactment) as writer:
+        df.to_excel(writer, index=False, sheet_name='Sheet1')
+
+
+generateExcel()
 sendEmail()
+os.remove(attactment)
